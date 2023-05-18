@@ -1,7 +1,8 @@
-import { formatChatMessageLinks, LiveKitRoom, VideoConference } from '@livekit/components-react';
+import { formatChatMessageLinks, LiveKitRoom} from '@livekit/components-react';
 import { LogLevel } from 'livekit-client';
 import { useRouter } from 'next/router';
 import { DebugMode } from '../../lib/Debug';
+import { VideoConference } from '../VideoConferecen';
 
 export default function CustomRoomConnection() {
   const router = useRouter();
@@ -13,11 +14,15 @@ export default function CustomRoomConnection() {
     return <h2>Missing LiveKit token</h2>;
   }
 
+    function formatter(message: string) {
+        console.log(message)
+        return formatChatMessageLinks(message)
+    }
   return (
     <main data-lk-theme="default">
       {liveKitUrl && (
         <LiveKitRoom token={token} serverUrl={liveKitUrl} audio={true} video={true}>
-          <VideoConference chatMessageFormatter={formatChatMessageLinks} />
+          <VideoConference   chatMessageFormatter={formatter} />
           <DebugMode logLevel={LogLevel.info} />
         </LiveKitRoom>
       )}
