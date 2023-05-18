@@ -38,6 +38,9 @@ jobs:
       - name: Build app
         run: yarn build
 
+      - name: Export app
+        run: next export
+
       #       - name: Setup Pages
       #         uses: actions/configure-pages@v3
       #       - name: Build with Jekyll
@@ -48,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: .next/server/pages
+          path: out
 
   # Deployment job
   deploy:
