@@ -7,7 +7,7 @@ import { signedFetch, loginUsingEthereumProvider } from '../lib/auth'
 
 function JoinScreen(provider: any) {
     const router = useRouter();
-    const [worldServer, setWorldServer] = useState<string | undefined>('https://worlds-content-server.decentraland.zone');
+    const [worldServer, setWorldServer] = useState<string | undefined>('https://worlds-content-server.decentraland.org');
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     async function livekitConnect(provider: any, worldServer: string, worldName: string) {
