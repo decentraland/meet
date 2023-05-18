@@ -5,32 +5,43 @@ import { useMetaMask } from "metamask-react";
 import { flatFetch } from '../lib/flat-fetch'
 import { signedFetch, loginUsingEthereumProvider } from '../lib/auth'
 
-async function livekitConnect(provider: any, worldServer: string, worldName: string) {
-    const identity = await loginUsingEthereumProvider(provider)
-    const aboutResponse = await flatFetch(`${worldServer}/world/${worldName}/about`, {
-        responseBodyType: 'json'
-    })
-    console.log(aboutResponse.json)
-    const url = aboutResponse.json['comms']['fixedAdapter'].replace('signed-login:', '').replace('get-comms-adapter', 'meet-adapter')
-    const response = await signedFetch(url, identity.authChain, {
-        method: 'POST',
-        responseBodyType: 'json'
-    }, {
-        'signer': 'dcl:explorer',
-        'intent': 'dcl:explorer:comms-handshake'
-    })
-
-    if (response.status === 200) {
-      const connStr = response.json['fixedAdapter']
-      console.log(connStr);
-      return new URL(connStr.replace('livekit:', ''))
-    }
-    throw Error(`Failed to connect to LiveKit: ${JSON.stringify(response.text || response.json?.message)}`)
-  }
-
 function JoinScreen(provider: any) {
     const router = useRouter();
     const [worldServer, setWorldServer] = useState<string | undefined>('https://worlds-content-server.decentraland.zone');
+    const [errorMessage, setErrorMessage] = useState<string>('');
+
+    async function livekitConnect(provider: any, worldServer: string, worldName: string) {
+      const aboutResponse = await flatFetch(`${worldServer}/world/${worldName}/about`)
+      console.log(aboutResponse.text)
+      if (aboutResponse.status === 200) {
+        const url = JSON.parse(aboutResponse.text!)['comms']['fixedAdapter'].replace('signed-login:', '').replace('get-comms-adapter', 'meet-adapter')
+        const identity = await loginUsingEthereumProvider(provider)
+        const response = await signedFetch(url, identity.authChain, {
+            method: 'POST',
+        }, {
+            'signer': 'dcl:explorer',
+            'intent': 'dcl:explorer:comms-handshake'
+        })
+
+        if (response.status === 200) {
+          const connStr = JSON.parse(response.text!)['fixedAdapter']
+          console.log(connStr);
+          return new URL(connStr.replace('livekit:', ''))
+        } else {
+          let message = ''
+          try {
+            message = JSON.parse(response.text || '')?.message
+          } catch (e) {
+            message = response.text || ''
+          }
+          throw Error(message)
+        }
+        // throw Error(`Failed to connect to LiveKit: ${JSON.stringify(response.text || response.json?.message)}`)
+      } else if (aboutResponse.status === 404)  {
+        throw Error(`World ${worldName} not found`)
+      }
+      throw Error('An error has occurred')
+    }
 
     const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
@@ -42,7 +53,7 @@ function JoinScreen(provider: any) {
             const livekitUrl = adapter.origin
             const token = adapter.searchParams.get('access_token')
             router.push(`/custom?liveKitUrl=${livekitUrl}&token=${token}`)
-        })
+        }).catch((e: any) => setErrorMessage(e.message))
     };
 
 
@@ -70,6 +81,7 @@ function JoinScreen(provider: any) {
             <hr
                 style={{ width: '100%', borderColor: 'rgba(255, 255, 255, 0.15)', marginBlock: '1rem' }}
             />
+          { errorMessage && (<div style={{ color: 'red' }}>{ errorMessage }</div>) }
             <button
                 style={{ paddingInline: '1.25rem', width: '100%' }}
                 className="lk-button"
