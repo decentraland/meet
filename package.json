@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@dcl/crypto": "^3.4.1",
-    "@livekit/components-react": "1.0.0",
+    "@dcl/protocol": "^1.0.0-4984397350.commit-6fe3e1b",
+    "@livekit/components-react": "^1.0.2",
     "@livekit/components-styles": "1.0.0",
     "eth-connect": "^6.1.0",
     "livekit-client": "1.9.2",
