@@ -2,7 +2,8 @@ import * as React from 'react';
 import type { WidgetState } from '@livekit/components-core';
 import { isEqualTrackRef, isTrackReference, log } from '@livekit/components-core';
 import { RoomEvent, Track } from 'livekit-client';
-import { Chat, ConnectionStateToast, ControlBar, FocusLayout, FocusLayoutContainer, GridLayout, LayoutContextProvider, MessageFormatter, ParticipantTile, RoomAudioRenderer, useCreateLayoutContext, usePinnedTracks, useTracks } from '@livekit/components-react';
+import { ConnectionStateToast, ControlBar, FocusLayout, FocusLayoutContainer, GridLayout, LayoutContextProvider, MessageFormatter, ParticipantTile, RoomAudioRenderer, useCreateLayoutContext, usePinnedTracks, useTracks } from '@livekit/components-react';
+import { Chat } from './Chat';
 /* import { CarouselLayout } from '@livekit/components-react/dist/components/layout';
  *  */
 /**
@@ -95,6 +96,10 @@ export function VideoConference({ chatMessageFormatter, ...props }: VideoConfere
           )}
           <ControlBar  controls={{ chat: true }} />
         </div>
+        <Chat
+          style={{ display: widgetState.showChat ? 'flex' : 'none' }}
+          messageFormatter={chatMessageFormatter}
+        />
       </LayoutContextProvider>
       <RoomAudioRenderer />
       <ConnectionStateToast />
