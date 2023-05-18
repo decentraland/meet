@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React  from 'react';
+import React, { useState }  from 'react';
 import styles from '../styles/Home.module.css';
 import { useMetaMask } from "metamask-react";
 import { flatFetch } from '../lib/flat-fetch'
@@ -30,11 +30,12 @@ async function livekitConnect(provider: any, worldServer: string, worldName: str
 
 function JoinScreen(provider: any) {
     const router = useRouter();
+    const [worldServer, setWorldServer] = useState<string | undefined>('https://worlds-content-server.decentraland.zone');
+
     const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.target as HTMLFormElement);
-        const worldServer = formData.get('worldServer')?.toString();
         const worldName = formData.get('worldName')?.toString();
 
         livekitConnect(provider, worldServer!, worldName!).then((adapter) => {
@@ -43,6 +44,7 @@ function JoinScreen(provider: any) {
             router.push(`/custom?liveKitUrl=${livekitUrl}&token=${token}`)
         })
     };
+
 
     return (
         <form className={styles.tabContent} onSubmit={onSubmit}>
@@ -54,6 +56,8 @@ function JoinScreen(provider: any) {
                 name="worldServer"
                 type="url"
                 placeholder="World Server URL: https://worlds-content-server.decentraland.zone"
+                value={worldServer}
+                onChange={(e: any) => setWorldServer(e.target.value)}
                 required
             />
             <input
