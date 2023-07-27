@@ -2,7 +2,20 @@ import * as React from 'react';
 import type { WidgetState } from '@livekit/components-core';
 import { isEqualTrackRef, isTrackReference, log } from '@livekit/components-core';
 import { RoomEvent, Track } from 'livekit-client';
-import { ConnectionStateToast, ControlBar, FocusLayout, FocusLayoutContainer, GridLayout, LayoutContextProvider, MessageFormatter, ParticipantTile, RoomAudioRenderer, useCreateLayoutContext, usePinnedTracks, useTracks } from '@livekit/components-react';
+import {
+  ConnectionStateToast,
+  ControlBar,
+  FocusLayout,
+  FocusLayoutContainer,
+  GridLayout,
+  LayoutContextProvider,
+  MessageFormatter,
+  ParticipantTile,
+  RoomAudioRenderer,
+  useCreateLayoutContext,
+  usePinnedTracks,
+  useTracks,
+} from '@livekit/components-react';
 import { Chat } from './Chat';
 /* import { CarouselLayout } from '@livekit/components-react/dist/components/layout';
  *  */
@@ -80,21 +93,21 @@ export function VideoConference({ chatMessageFormatter, ...props }: VideoConfere
         <div className="lk-video-conference-inner">
           {!focusTrack ? (
             <div className="lk-grid-layout-wrapper">
-              <GridLayout  tracks={tracks}>
-                <ParticipantTile/>
+              <GridLayout tracks={tracks}>
+                <ParticipantTile />
               </GridLayout>
             </div>
           ) : (
             <div className="lk-focus-layout-wrapper">
               <FocusLayoutContainer>
-                  {/* <CarouselLayout tracks={carouselTracks}> */}
-                  <ParticipantTile />
-                  {/* </CarouselLayout> */}
-                {focusTrack && <FocusLayout  track={focusTrack} />}
+                {/* <CarouselLayout tracks={carouselTracks}> */}
+                <ParticipantTile />
+                {/* </CarouselLayout> */}
+                {focusTrack && <FocusLayout track={focusTrack} />}
               </FocusLayoutContainer>
             </div>
           )}
-          <ControlBar  controls={{ chat: true }} />
+          <ControlBar controls={{ chat: true }} />
         </div>
         <Chat
           style={{ display: widgetState.showChat ? 'flex' : 'none' }}
@@ -106,3 +119,5 @@ export function VideoConference({ chatMessageFormatter, ...props }: VideoConfere
     </div>
   );
 }
+
+export default function () {}

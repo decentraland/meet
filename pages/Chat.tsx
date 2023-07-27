@@ -3,7 +3,7 @@ import { ChatEntry, MessageFormatter, useRoomContext } from '@livekit/components
 import { Participant, RoomEvent } from 'livekit-client';
 import * as React from 'react';
 import { DataPacket_Kind } from 'livekit-client';
-import { Packet } from '@dcl/protocol/out-js/decentraland/kernel/comms/rfc4/comms.gen'
+import { Packet } from '@dcl/protocol/out-js/decentraland/kernel/comms/rfc4/comms.gen';
 
 export type { ChatMessage, ReceivedChatMessage };
 
@@ -42,38 +42,44 @@ export function cloneSingleChild(
 export function Chat({ messageFormatter, ...props }: ChatProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const ulRef = React.useRef<HTMLUListElement>(null);
-    const [chatMessages, setChatMessages] = React.useState<ReceivedChatMessage[]>([])
+  const [chatMessages, setChatMessages] = React.useState<ReceivedChatMessage[]>([]);
 
   const room = useRoomContext();
-  room.on(RoomEvent.DataReceived, (payload: Uint8Array, participant?: Participant, _?: DataPacket_Kind) => {
+  room.on(
+    RoomEvent.DataReceived,
+    (payload: Uint8Array, participant?: Participant, _?: DataPacket_Kind) => {
       if (participant) {
-          const packet = Packet.decode(payload)
-          if (packet.message && packet.message.$case === 'chat') {
-              const { timestamp, message } =  packet.message.chat
-              const msg = {from: participant, timestamp, message }
-              setChatMessages([ msg, ...chatMessages])
-          }
+        const packet = Packet.decode(payload);
+        if (packet.message && packet.message.$case === 'chat') {
+          const { timestamp, message } = packet.message.chat;
+          const msg = { from: participant, timestamp, message };
+          setChatMessages([msg, ...chatMessages]);
+        }
       }
-  })
+    },
+  );
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-      if (inputRef.current && inputRef.current.value.trim() !== '') {
-          await room.localParticipant.publishData(Packet.encode({
-              message: {
-                  $case: 'chat',
-                  chat: {
-                      timestamp: Date.now(),
-                      message: inputRef.current.value
-                  }
-              }
-          }).finish(), DataPacket_Kind.RELIABLE)
-          inputRef.current.value = '';
-          inputRef.current.focus();
-      }
+    if (inputRef.current && inputRef.current.value.trim() !== '') {
+      await room.localParticipant.publishData(
+        Packet.encode({
+          message: {
+            $case: 'chat',
+            chat: {
+              timestamp: Date.now(),
+              message: inputRef.current.value,
+            },
+          },
+        }).finish(),
+        DataPacket_Kind.RELIABLE,
+      );
+      inputRef.current.value = '';
+      inputRef.current.focus();
+    }
   }
 
-    const isSending = false
+  const isSending = false;
 
   React.useEffect(() => {
     if (ulRef) {
@@ -123,3 +129,5 @@ export function Chat({ messageFormatter, ...props }: ChatProps) {
     </div>
   );
 }
+
+export default function () {}
